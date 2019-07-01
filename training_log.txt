@@ -1,0 +1,43 @@
+1. L2 Regularization(Ridge regression) cv=10, alpha = 10: local cv = 0.1251, public lb = 0.1224
+每次去掉一个无关feature，看一下效果。
+missing value大于15%的六个：PoolQC, MiscFeature, Alley, Fence, FireplaceQu, LotFrontage
+每次去掉一个，查看一下local cv
+PoolQC: 0.1249
+MiscFeature: 0.1250
+Alley: 0.1250
+Fence: 0.1249
+FireplaceQu: 0.1250
+LotFrontage: 0.1250
+可以，效果很好，那么全部去掉
+2. 去掉上述feature，L2(Ridge Regularization) cv=10, alpha = 10: local cv = 0.1243, public lb = 0.1221
+
+以后的都去掉了上面6个feature
+3. L1 regularization(Lasso regression) cv = 10: local cv = 0.1207, public lb = 0.1213
+显然L1 regularization效果要好一些，查看一下coef，全部是0的有如下feature:
+MasVnrArea, Street, Utilities
+全部去掉看一下L1的local cv变化：0.12065（小数点后稍稍变了一下，那么还是去掉好了）
+
+下一步是去掉异常数据点：
+首先查看coef，找到10个最高的coef，查看对应的关系图，找出异常的ID。
+1stFlrSF中有一个大于4000的，1299
+BsmtFinSF1有一个大于5000的，1299（去掉之后效果拔群0.1139）
+GarageArea大于1220的，582，1062，1191，1299（0.1136-0.1137-0.1135）
+所以1062不要去掉。
+GrLivArea大于4500的，524，1299（0.1080）
+LotArea大于100000，250，314，336，707（0.1080-0.1082-0.1080-0.1081）（都不去掉）
+LotFrontage大于300，935，1299（0.1080）
+MasVnrArea大于1400，298（0.1080）
+TotalBsmtSF大于6000，1299
+最后只有如下的异常点：
+outliars = [1299, 582, 1191, 524]
+4. L1 regularization(Lasso regression) cv = 10: local cv = 0.1080, public lb = 0.1194
+5. L2 Regularization(Ridge regression) cv=10, alpha = 10: local cv = 0.1092, public lb = 0.1195
+
+然后是漫长的feature engineering······说实话从上面的结果来看，已经出现overfitting了
+先是有一大堆0的，看下去掉后会不会有上升：3SsnPorch(0.10798), LowQualFinSF(0.10798), MiscVal(0.10803), 
+PoolArea(0.1084)，基本上去掉不去掉差别不大。所以先不用去掉。
+接下来把几个year转换成dummy feature：GarageYrBlt, YearBuilt, YearRemodAdd, YrSold
+
+ 
+
+
